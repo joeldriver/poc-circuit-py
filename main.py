@@ -8,13 +8,10 @@ Other adafruit accessories:
 
 '''
 
-
 import board
 import busio
 import digitalio
-#from digitalio import DigitalInOut
 import time
-#import rotaryio
 import adafruit_ssd1306
 import adafruit_ina219
 
@@ -66,10 +63,10 @@ last_button = button.value
 rotary_prev_state = [rot_a.value, rot_b.value]
  
 while True:
-    # reset encoder and wait for the next turn
+    # reset encoder to 0 and wait
     encoder_direction = 0
  
-    # take a 'snapshot' of the rotary encoder state at this time
+    # take a 'snapshat' of the rotary encoder state
     rotary_curr_state = [rot_a.value, rot_b.value]
  
     if rotary_curr_state != rotary_prev_state:
@@ -83,7 +80,8 @@ while True:
                 #print("Falling B")
                 falling_edge = B_POSITION
             else:
-                # uhh something went deeply wrong, lets start over
+                # something went terribly wrong
+                # https://www.youtube.com/watch?v=t3otBjVZzT0
                 continue
  
         if rotary_curr_state == [True, True]:
@@ -95,7 +93,8 @@ while True:
                 rising_edge = A_POSITION
                 # print("Rising A")
             else:
-                # uhh something went deeply wrong, lets start over
+                # something went terribly wrong
+                # https://www.youtube.com/watch?v=t3otBjVZzT0
                 continue
  
             # check first and last edge
@@ -108,7 +107,8 @@ while True:
                 encoder_direction = 1
                 #print("%d inc" % encoder_counter)
             else:
-                # (shrug) something didn't work out, oh well!
+                # something went terribly wrong
+                # https://www.youtube.com/watch?v=t3otBjVZzT0
                 encoder_direction = 0
  
             # reset our edge tracking
@@ -118,18 +118,14 @@ while True:
 
     # Check if rotary encoder went down
     #if encoder_direction == -1:
-    #    kbd.press(Keycode.CONTROL, Keycode.DOWN_ARROW)
-    #    kbd.release_all()
  
-    # Button was 'just pressed'
+    # Button on encoder was 'just pressed'
     if (not button.value) and last_button:
         oled.fill(0)
         oled.text('Button pressed!', 0, 0)
         oled.show()
         encoder_counter = 0
         print("Button pressed!")
-        #kbd.press(44) #Keycode.SPACE
-        #kbd.release_all()
         #ring[dot_location] = PRESSED_DOT_COLOR # show it was pressed on ring
         timestamp = time.monotonic()        # something happened!
     elif button.value and (not last_button):
@@ -137,8 +133,6 @@ while True:
         oled.text('Button released!', 0, 0)
         oled.show()
         #print("Button Released!")
-        # kbd.press(Keycode.SHIFT, Keycode.SIX)
-        #kbd.release_all()
         #ring[dot_location] = DOT_COLOR      # show it was released on ring
         timestamp = time.monotonic()        # something happened!
     last_button = button.value
@@ -146,11 +140,6 @@ while True:
     if encoder_direction != 0:
         timestamp = time.monotonic()        # something happened!
         encoder_counter_txt = str(encoder_counter)
-        # spin neopixel LED around!
-        #previous_location = dot_location
-        #dot_location += encoder_direction   # move dot in the direction
-        #dot_location += len(ring)           # in case we moved negative, wrap around
-        #dot_location %= len(ring)
         #print("Bus Voltage:   {} V".format(ina219.bus_voltage))
         #print("Shunt Voltage: {} mV".format(ina219.shunt_voltage / 1000))
         #print("Current:       {} mA".format(ina219.current))
